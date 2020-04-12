@@ -7,10 +7,15 @@ import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.auth.mongo.MongoAuth;
+import io.vertx.ext.mongo.FindOptions;
 import io.vertx.ext.mongo.MongoClient;
 
 public class PersistenceVerticle extends AbstractVerticle{
+
+  Logger log = LoggerFactory.getLogger(PersistenceVerticle.class);
 
   // for DB access
   private MongoClient mongoClient;
@@ -39,6 +44,9 @@ public class PersistenceVerticle extends AbstractVerticle{
       switch (action) {
         case "register-user":
           registerUser(message);
+          break;
+        case "get-user":
+          getUser(message);
           break;
         default:
           message.fail(1, "Unkown action: " + message.body());
@@ -96,4 +104,28 @@ public class PersistenceVerticle extends AbstractVerticle{
     });
 
   }
+
+
+  private void getUser(Message<JsonObject> message) {
+
+//    JsonObject userToReturn = message.body().getJsonObject("user");
+    String email = message.body().getString("email");
+
+    JsonObject query = new JsonObject().put("email", email);
+    log.info("DB query->"+ query);
+
+    JsonObject obj = new JsonObject().put("email","").put("username","");
+    FindOptions options = new FindOptions().setLimit(1).setFields(obj);
+    mongoClient.findWithOptions("user", query, options, res -> {
+        if (res.succeeded()) {
+          JsonObject usr = res.result().get(0);
+          usr.remove("_id");
+          message.reply(Json.encode(usr));
+        }else{
+          message.fail(2, "insert failed: " + res.cause().getMessage());
+        }
+    });
+  }
+
+
 }

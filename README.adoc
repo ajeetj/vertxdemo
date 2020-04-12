@@ -1,6 +1,8 @@
-= Vert.x Maven Starter
+= Vert.x Demo
+Vertx demo of all basic features
 
 This project is a template to start your own Vert.x project using Apache Maven.
+
 
 == Prerequisites
 
@@ -61,3 +63,11 @@ mvn clean package
 ----
 
 It generates a _fat-jar_ in the `target` directory.
+
+
+== Reference
+= Video https://www.youtube.com/watch?v=3_CRKfs4Zzo
+= Vertx Java doc https://vertx.io/docs/vertx-web/java/
+= Vertx guide https://vertx.io/docs/guide-for-java-devs/
+= Realworld API https://github.com/gothinkster/realworld/tree/master/api
+= Vertx Maven starter https://github.com/vert-x3/vertx-maven-starter
